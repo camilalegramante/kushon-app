@@ -4,7 +4,6 @@
   "description": "Kushon - Title and volume management application",
   "private": true,
   "scripts": {
-    "install": "npm run install:backend && npm run install:frontend && npm run prisma:generate",
     "install:backend": "cd backend && npm install",
     "install:frontend": "cd frontend && npm install",
     "prisma:generate": "cd backend && npm run prisma:generate",

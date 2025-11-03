@@ -15,7 +15,11 @@ export class TitleController {
   @Post()
   @UseInterceptors(AnyFilesInterceptor({
     storage: diskStorage({
-      destination: './uploads',
+      destination: (_req, _file, callback) => {
+        const { join } = require('path');
+        const uploadPath = join(process.cwd(), 'uploads');
+        callback(null, uploadPath);
+      },
       filename: (req, file, callback) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         const ext = extname(file.originalname);
@@ -99,7 +103,11 @@ export class TitleController {
   @Put(':id')
   @UseInterceptors(AnyFilesInterceptor({
     storage: diskStorage({
-      destination: './uploads',
+      destination: (_req, _file, callback) => {
+        const { join } = require('path');
+        const uploadPath = join(process.cwd(), 'uploads');
+        callback(null, uploadPath);
+      },
       filename: (req, file, callback) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         const ext = extname(file.originalname);
@@ -146,8 +154,6 @@ export class TitleController {
       }
 
       if (files && files.length > 0) {
-        console.log('Files received:', files.map(f => ({ fieldname: f.fieldname, filename: f.filename })));
-
         const mainCover = files.find(file => file.fieldname === 'mainCover');
         if (mainCover) {
           await this.titleRepository.updateMainCover(id, `/uploads/${mainCover.filename}`);

@@ -9,6 +9,10 @@ class UpdateVolumeDto {
 
   @IsOptional()
   number?: number;
+
+  @IsOptional()
+  @IsString()
+  coverImage?: string;
 }
 
 export class UpdateTitleDto {

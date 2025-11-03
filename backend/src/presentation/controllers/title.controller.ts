@@ -39,6 +39,13 @@ export class TitleController {
         if (mainCover) {
           createTitleDto.coverImage = `/uploads/${mainCover.filename}`;
         }
+
+        for (const volume of createTitleDto.volumes) {
+          const volumeFile = files.find(file => file.fieldname === `volume_${volume.number}`);
+          if (volumeFile) {
+            volume.coverImage = `/uploads/${volumeFile.filename}`;
+          }
+        }
       }
 
       const title = await this.titleRepository.create(createTitleDto);

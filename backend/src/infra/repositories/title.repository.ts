@@ -157,6 +157,7 @@ export class TitleRepository {
             data: {
               number: vol.number,
               title: vol.title,
+              coverImage: vol.coverImage,
               titleId: id
             }
           });
@@ -167,6 +168,11 @@ export class TitleRepository {
           } catch (error) {
             console.error(`Erro ao enviar notificações para volume ${vol.number}:`, error);
           }
+        } else if (vol.coverImage) {
+          await this.prisma.volume.update({
+            where: { id: existingVolume.id },
+            data: { coverImage: vol.coverImage }
+          });
         }
       }
     }

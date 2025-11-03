@@ -51,8 +51,6 @@ async function bootstrap() {
   const corsOrigins = [
     'http://localhost:5173',
     'http://localhost:3000',
-    /\.railway\.app$/,
-    /\.vercel\.app$/,
     /\.herokuapp\.com$/,
   ];
   app.enableCors({
@@ -61,7 +59,7 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   });
-  logger.log('   └─ Allowed origins: localhost, *.railway.app, *.vercel.app, *.herokuapp.com');
+  logger.log('   └─ Allowed origins: localhost, *.herokuapp.com');
   logger.log('   └─ Allowed methods: GET, POST, PUT, DELETE, PATCH');
   logger.log('   └─ Credentials: enabled');
 

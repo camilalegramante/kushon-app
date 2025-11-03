@@ -8,7 +8,7 @@ interface VolumeGridProps {
 }
 
 const VolumeGrid = ({ volumes, onVolumeToggle }: VolumeGridProps) => {
-  const [hoveredVolume, setHoveredVolume] = useState<number | null>(null);
+  const [_hoveredVolume, setHoveredVolume] = useState<number | null>(null);
 
   return (
     <div className="volume-grid-section">

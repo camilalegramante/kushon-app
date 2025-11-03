@@ -5,14 +5,19 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/log-build-config.js",
     "build": "tsc -b && vite build",
+    "postbuild": "node scripts/log-build-config.js && echo '✅ Frontend build completed successfully!'",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prestart": "echo '🚀 Starting Kushon Frontend Server...' && echo 'Serving static files from dist/ on port 3000'",
+    "start": "serve -s dist -l 3000 -n"
   },
   "dependencies": {
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.8.1"
+    "react-router-dom": "^7.8.1",
+    "serve": "^14.2.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",

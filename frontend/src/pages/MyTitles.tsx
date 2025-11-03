@@ -165,7 +165,9 @@ const MyTitles = () => {
 
       <div className="filters-section">
         <div className="search-section">
+          <label htmlFor="search-input" className="search-label">Buscar títulos:</label>
           <input
+            id="search-input"
             type="text"
             placeholder="Buscar por título, autor ou gênero..."
             value={searchTerm}

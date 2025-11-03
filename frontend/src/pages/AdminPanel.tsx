@@ -140,7 +140,7 @@ const AdminPanel = () => {
         formData.append('mainCover', newTitle.mainCover.file);
       }
 
-      newTitle.volumeCovers.forEach((vol, index) => {
+      newTitle.volumeCovers.forEach((vol) => {
         if (vol.file) {
           formData.append(`volume_${vol.number}`, vol.file);
         }

@@ -14,10 +14,16 @@
     "start:frontend": "cd frontend && npm run dev",
     "stop:db": "docker stop kushon-postgres || true",
     "clean": "npm run stop:db && docker rm kushon-postgres || true",
-    "help": "echo \"Available commands: install, start, start:db, start:backend, start:frontend, stop:db, clean\""
+    "help": "echo \"Available commands: install, start, start:db, start:backend, start:frontend, stop:db, clean\"",
+    "heroku-postbuild": "echo '\\n========================================' && echo '🏗️  HEROKU POST-BUILD STARTED' && echo '========================================\\n' && echo '📦 Step 1: Generating Prisma Client...' && cd backend && npm run prisma:generate && echo '✅ Prisma client generated' && echo '\\n📦 Step 2: Building Backend...' && npm run build && echo '✅ Backend built successfully' && echo '\\n📦 Step 3: Building Frontend...' && cd ../frontend && npm run build && echo '✅ Frontend built successfully' && echo '\\n========================================' && echo '✅ HEROKU POST-BUILD COMPLETED' && echo '========================================\\n'"
   },
   "workspaces": [
     "backend",
     "frontend"
-  ]
+  ],
+  "engines": {
+    "node": "22.x",
+    "npm": "10.x"
+  },
+  "heroku-run-build-script": true
 }

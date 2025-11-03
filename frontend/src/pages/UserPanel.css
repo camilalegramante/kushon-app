@@ -164,14 +164,14 @@
 
 .titles-grid.compact {
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 1.4rem;
+  gap: 1.5rem;
 }
 
 .titles-grid.compact .title-card {
   transform: scale(0.7);
   transform-origin: top left;
-  margin-bottom: -30%;
-  margin-right: -30%;
+  margin-bottom: -25%;
+  margin-right: -25%;
 }
 
 .titles-grid.compact .title-card:hover {

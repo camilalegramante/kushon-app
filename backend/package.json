@@ -6,12 +6,13 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "nest build && npm run build:seed",
+    "build:seed": "npx tsc prisma/seed.ts --outDir dist/prisma --esModuleInterop --resolveJsonModule --skipLibCheck --module commonjs",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -20,9 +21,14 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:seed": "ts-node prisma/seed.ts",
+    "prisma:seed:prod": "node dist/prisma/seed.js",
     "prisma:studio": "prisma studio",
-    "prisma:reset": "prisma migrate reset"
+    "prisma:reset": "prisma migrate reset",
+    "db:deploy": "npm run db:migrate && npm run db:seed",
+    "db:migrate": "echo '\\n========================================' && echo '🗄️  RUNNING DATABASE MIGRATIONS' && echo '========================================\\n' && prisma migrate deploy && echo '✅ Migrations completed successfully\\n'",
+    "db:seed": "echo '========================================' && echo '🌱 SEEDING DATABASE' && echo '========================================\\n' && node dist/prisma/seed.js && echo '✅ Seeding completed successfully\\n' || echo '⚠️  Seeding skipped (data may already exist)\\n'"
   },
   "dependencies": {
     "@nestjs/cli": "^11.0.0",

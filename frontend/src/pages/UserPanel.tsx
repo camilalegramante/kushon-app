@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiService, type TitleResponse } from '../services/api';
 import { useToast } from '../contexts/ToastContext';
+import TitleCardSkeleton from '../components/TitleCardSkeleton';
 import './UserPanel.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
@@ -12,7 +13,7 @@ const UserPanel = () => {
   const { showToast } = useToast();
   const [myTitles, setMyTitles] = useState<TitleResponse[]>([]);
   const [latestTitles, setLatestTitles] = useState<TitleResponse[]>([]);
-  const [allTitlesCount, setAllTitlesCount] = useState(0);
+  const [_allTitlesCount, setAllTitlesCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -182,8 +183,10 @@ const UserPanel = () => {
             Meus Títulos ({myTitles.length})
           </h2>
           {loading ? (
-            <div className="loading-message">
-              <p>Carregando títulos...</p>
+            <div className="titles-grid">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <TitleCardSkeleton key={index} />
+              ))}
             </div>
           ) : myTitles.length === 0 ? (
             <div className="empty-message">
@@ -210,8 +213,10 @@ const UserPanel = () => {
           <h2 className="compact-title">Últimos Títulos Cadastrados</h2>
 
           {loading ? (
-            <div className="loading-message">
-              <p>Carregando títulos...</p>
+            <div className="titles-grid compact">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <TitleCardSkeleton key={index} />
+              ))}
             </div>
           ) : latestTitles.length === 0 ? (
             <div className="empty-message">

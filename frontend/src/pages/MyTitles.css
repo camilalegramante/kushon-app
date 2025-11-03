@@ -39,14 +39,19 @@
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
-  align-items: flex-end;
+  align-items: flex-start;
   flex-wrap: wrap;
 }
 
 .search-section {
   flex: 1;
   min-width: 250px;
+  order: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
+
 
 .search-input {
   width: 100%;
@@ -55,6 +60,8 @@
   border-radius: 8px;
   font-size: 1rem;
   transition: border-color 0.2s;
+  height: 3.125rem;
+  box-sizing: border-box;
 }
 
 .search-input:focus {
@@ -66,9 +73,12 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  order: 1;
+  align-items: flex-start;
 }
 
-.filter-container label {
+.filter-container label,
+.search-label {
   font-weight: 500;
   color: #495057;
   font-size: 0.9rem;
@@ -82,6 +92,8 @@
   background: white;
   cursor: pointer;
   min-width: 150px;
+  height: 3.125rem;
+  box-sizing: border-box;
 }
 
 .status-filter-select:focus {

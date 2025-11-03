@@ -22,7 +22,6 @@ const TitleDetail = () => {
   const { showToast } = useToast();
   const [title, setTitle] = useState<TitleResponse | null>(null);
   const [volumes, setVolumes] = useState<UserVolume[]>([]);
-  const [userVolumes, setUserVolumes] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -62,9 +61,6 @@ const TitleDetail = () => {
           }));
 
           setVolumes(userVolumes);
-
-          const ownedCount = userVolumes.filter(v => v.owned).length;
-          setUserVolumes(ownedCount);
         }
 
         if (notificationResponse.success) {
@@ -109,30 +105,14 @@ const TitleDetail = () => {
     );
   }
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value) || 0;
-    if (value >= 0 && value <= volumes.length) {
-      setUserVolumes(value);
-      
-      const updatedVolumes = volumes.map((vol, index) => ({
-        ...vol,
-        owned: index < value
-      }));
-      setVolumes(updatedVolumes);
-    }
-  };
-
   const handleVolumeToggle = (volumeNumber: number) => {
     const updatedVolumes = volumes.map(vol => 
       vol.number === volumeNumber 
         ? { ...vol, owned: !vol.owned }
         : vol
     );
-    
+
     setVolumes(updatedVolumes);
-    
-    const ownedCount = updatedVolumes.filter(v => v.owned).length;
-    setUserVolumes(ownedCount);
   };
 
   const handleSave = async () => {

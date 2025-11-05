@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { EnvironmentValidation } from './config/env.validation';
+import { EmailService } from './application/services/email.service';
 
 async function bootstrap() {
   console.log('\n');
@@ -77,6 +78,24 @@ async function bootstrap() {
   logger.log('🔌 Configuring API routes...');
   app.setGlobalPrefix('api');
   logger.log('   └─ Global prefix: /api');
+
+  logger.log('📧 Verifying SMTP Configuration...');
+  try {
+    const emailService = app.get(EmailService);
+    if (emailService && emailService.testConnection) {
+      const isConnected = await emailService.testConnection();
+      if (isConnected) {
+        logger.log('   ✅ SMTP connection verified successfully');
+        logger.log(`   └─ Host: ${process.env.SMTP_HOST}`);
+        logger.log(`   └─ Port: ${process.env.SMTP_PORT}`);
+      } else {
+        logger.warn('   ⚠️  SMTP connection test failed - emails may not be delivered');
+      }
+    }
+  } catch (error) {
+    logger.warn('   ⚠️  Could not verify SMTP connection during startup');
+    logger.debug(`   └─ Error: ${error.message}`);
+  }
 
   logger.log('🌐 Checking for frontend build...');
   const frontendPath = join(process.cwd(), '..', 'frontend', 'dist');

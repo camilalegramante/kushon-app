@@ -3,6 +3,7 @@ import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { TitleRepository } from '../../infra/repositories/title.repository';
+import { UploadService } from '../../infra/services/upload.service';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Express } from 'express';
 import { CreateTitleDto } from '../../application/dtos/create-title.dto';
@@ -10,44 +11,29 @@ import { UpdateTitleDto } from '../../application/dtos/update-title.dto';
 
 @Controller('titles')
 export class TitleController {
-  constructor(private readonly titleRepository: TitleRepository) {}
+  constructor(
+    private readonly titleRepository: TitleRepository,
+    private readonly uploadService: UploadService
+  ) {}
 
   @Post()
-  @UseInterceptors(AnyFilesInterceptor({
-    storage: diskStorage({
-      destination: (_req, _file, callback) => {
-        const { join } = require('path');
-        const uploadPath = join(process.cwd(), 'uploads');
-        callback(null, uploadPath);
-      },
-      filename: (req, file, callback) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = extname(file.originalname);
-        const filename = `${file.fieldname}-${uniqueSuffix}${ext}`;
-        callback(null, filename);
-      },
-    }),
-    fileFilter: (req, file, callback) => {
-      if (!file.mimetype.startsWith('image/')) {
-        return callback(new Error('Apenas imagens são permitidas!'), false);
-      }
-      callback(null, true);
-    },
-  }))
+  @UseInterceptors(AnyFilesInterceptor())
   async create(@Body('data') data: string, @UploadedFiles() files: Express.Multer.File[]) {
     try {
       const createTitleDto: CreateTitleDto = JSON.parse(data);
 
       if (files && files.length > 0) {
+        const uploadedUrls = await this.uploadService.uploadMultipleImages(files, 'kushon/titles');
+
         const mainCover = files.find(file => file.fieldname === 'mainCover');
         if (mainCover) {
-          createTitleDto.coverImage = `/uploads/${mainCover.filename}`;
+          createTitleDto.coverImage = uploadedUrls.get('mainCover');
         }
 
         for (const volume of createTitleDto.volumes) {
           const volumeFile = files.find(file => file.fieldname === `volume_${volume.number}`);
           if (volumeFile) {
-            volume.coverImage = `/uploads/${volumeFile.filename}`;
+            volume.coverImage = uploadedUrls.get(`volume_${volume.number}`);
           }
         }
       }
@@ -101,27 +87,7 @@ export class TitleController {
   }
 
   @Put(':id')
-  @UseInterceptors(AnyFilesInterceptor({
-    storage: diskStorage({
-      destination: (_req, _file, callback) => {
-        const { join } = require('path');
-        const uploadPath = join(process.cwd(), 'uploads');
-        callback(null, uploadPath);
-      },
-      filename: (req, file, callback) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = extname(file.originalname);
-        const filename = `${file.fieldname}-${uniqueSuffix}${ext}`;
-        callback(null, filename);
-      },
-    }),
-    fileFilter: (req, file, callback) => {
-      if (!file.mimetype.startsWith('image/')) {
-        return callback(new Error('Apenas imagens são permitidas!'), false);
-      }
-      callback(null, true);
-    },
-  }))
+  @UseInterceptors(AnyFilesInterceptor())
   async update(
     @Param('id') id: string,
     @Body('data') data?: string,
@@ -154,17 +120,20 @@ export class TitleController {
       }
 
       if (files && files.length > 0) {
+        const uploadedUrls = await this.uploadService.uploadMultipleImages(files, 'kushon/titles');
+
         const mainCover = files.find(file => file.fieldname === 'mainCover');
         if (mainCover) {
-          await this.titleRepository.updateMainCover(id, `/uploads/${mainCover.filename}`);
+          const coverUrl = uploadedUrls.get('mainCover');
+          await this.titleRepository.updateMainCover(id, coverUrl);
         }
 
         for (const file of files) {
           if (file.fieldname.startsWith('volume_')) {
             const volumeNumber = parseInt(file.fieldname.split('_')[1]);
-            const coverImagePath = `/uploads/${file.filename}`;
+            const coverUrl = uploadedUrls.get(file.fieldname);
 
-            await this.titleRepository.updateVolumeCover(volumeNumber, id, coverImagePath);
+            await this.titleRepository.updateVolumeCover(volumeNumber, id, coverUrl);
           }
         }
       }

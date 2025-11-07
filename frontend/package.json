@@ -10,6 +10,9 @@
     "postbuild": "node scripts/log-build-config.js && echo '✅ Frontend build completed successfully!'",
     "lint": "eslint .",
     "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
     "prestart": "echo '🚀 Starting Kushon Frontend Server...' && echo 'Serving static files from dist/ on port 3000'",
     "start": "serve -s dist -l 3000 -n"
   },
@@ -21,16 +24,23 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^5.0.0",
+    "@vitest/coverage-v8": "^4.0.8",
     "eslint": "^9.33.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
+    "happy-dom": "^20.0.10",
+    "jsdom": "^27.1.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.1",
-    "vite": "^7.1.2"
+    "vite": "^7.1.2",
+    "vitest": "^4.0.8"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "^4.30.1"

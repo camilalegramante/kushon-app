@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import * as testingLibrary from '@testing-library/dom';
 import { AuthProvider, useAuth } from './AuthContext';
 
 global.fetch = vi.fn();
@@ -62,7 +63,7 @@ describe('AuthContext', () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     render(<TestComponent />);
-    expect(screen.getByText(/useAuth must be used within an AuthProvider/i)).toBeInTheDocument();
+    expect(testingLibrary.screen.getByText(/useAuth must be used within an AuthProvider/i)).toBeInTheDocument();
 
     consoleError.mockRestore();
   });
@@ -74,12 +75,12 @@ describe('AuthContext', () => {
       </AuthProvider>
     );
 
-    await waitFor(() => {
-      expect(screen.getByTestId('loading')).toHaveTextContent('loaded');
+    await testingLibrary.waitFor(() => {
+      expect(testingLibrary.screen.getByTestId('loading')).toHaveTextContent('loaded');
     });
 
-    expect(screen.getByTestId('user')).toHaveTextContent('no user');
-    expect(screen.getByTestId('token')).toHaveTextContent('no token');
+    expect(testingLibrary.screen.getByTestId('user')).toHaveTextContent('no user');
+    expect(testingLibrary.screen.getByTestId('token')).toHaveTextContent('no token');
   });
 
   it('should initialize with token from localStorage', async () => {
@@ -104,12 +105,12 @@ describe('AuthContext', () => {
       </AuthProvider>
     );
 
-    await waitFor(() => {
-      expect(screen.getByTestId('loading')).toHaveTextContent('loaded');
+    await testingLibrary.waitFor(() => {
+      expect(testingLibrary.screen.getByTestId('loading')).toHaveTextContent('loaded');
     });
 
-    expect(screen.getByTestId('user')).toHaveTextContent('John Doe (john@example.com)');
-    expect(screen.getByTestId('token')).toHaveTextContent('has token');
+    expect(testingLibrary.screen.getByTestId('user')).toHaveTextContent('John Doe (john@example.com)');
+    expect(testingLibrary.screen.getByTestId('token')).toHaveTextContent('has token');
   });
 
   it('should logout when token validation fails', async () => {
@@ -126,12 +127,12 @@ describe('AuthContext', () => {
       </AuthProvider>
     );
 
-    await waitFor(() => {
-      expect(screen.getByTestId('loading')).toHaveTextContent('loaded');
+    await testingLibrary.waitFor(() => {
+      expect(testingLibrary.screen.getByTestId('loading')).toHaveTextContent('loaded');
     });
 
-    expect(screen.getByTestId('user')).toHaveTextContent('no user');
-    expect(screen.getByTestId('token')).toHaveTextContent('no token');
+    expect(testingLibrary.screen.getByTestId('user')).toHaveTextContent('no user');
+    expect(testingLibrary.screen.getByTestId('token')).toHaveTextContent('no token');
     expect(localStorageMock.getItem('token')).toBeNull();
   });
 
@@ -163,11 +164,11 @@ describe('AuthContext', () => {
       </AuthProvider>
     );
 
-    await waitFor(() => {
-      expect(screen.getByTestId('loading')).toHaveTextContent('loaded');
+    await testingLibrary.waitFor(() => {
+      expect(testingLibrary.screen.getByTestId('loading')).toHaveTextContent('loaded');
     });
 
-    const loginBtn = screen.getByTestId('login-btn');
+    const loginBtn = testingLibrary.screen.getByTestId('login-btn');
     expect(loginBtn).toBeInTheDocument();
   });
 
@@ -193,18 +194,18 @@ describe('AuthContext', () => {
       </AuthProvider>
     );
 
-    await waitFor(() => {
-      expect(screen.getByTestId('user')).toHaveTextContent('John Doe');
+    await testingLibrary.waitFor(() => {
+      expect(testingLibrary.screen.getByTestId('user')).toHaveTextContent('John Doe');
     });
 
-    const logoutBtn = screen.getByTestId('logout-btn');
+    const logoutBtn = testingLibrary.screen.getByTestId('logout-btn');
     await logoutBtn.click();
 
-    await waitFor(() => {
-      expect(screen.getByTestId('user')).toHaveTextContent('no user');
+    await testingLibrary.waitFor(() => {
+      expect(testingLibrary.screen.getByTestId('user')).toHaveTextContent('no user');
     });
 
-    expect(screen.getByTestId('token')).toHaveTextContent('no token');
+    expect(testingLibrary.screen.getByTestId('token')).toHaveTextContent('no token');
     expect(localStorageMock.getItem('token')).toBeNull();
   });
 });

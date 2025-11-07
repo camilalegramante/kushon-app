@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import * as testingLibrary from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import Header from './Header';
@@ -40,7 +41,7 @@ describe('Header Component', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText('Kushon')).toBeInTheDocument();
+    expect(testingLibrary.screen.getByText('Kushon')).toBeInTheDocument();
   });
 
   it('should display welcome text with user name', () => {
@@ -50,7 +51,7 @@ describe('Header Component', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText('Olá, Jane Doe')).toBeInTheDocument();
+    expect(testingLibrary.screen.getByText('Olá, Jane Doe')).toBeInTheDocument();
   });
 
   it('should display default user name when not provided', () => {
@@ -60,7 +61,7 @@ describe('Header Component', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText('Olá, Usuário')).toBeInTheDocument();
+    expect(testingLibrary.screen.getByText('Olá, Usuário')).toBeInTheDocument();
   });
 
   it('should render logout button', () => {
@@ -70,7 +71,7 @@ describe('Header Component', () => {
       </BrowserRouter>
     );
 
-    const logoutBtn = screen.getByText('Sair');
+    const logoutBtn = testingLibrary.screen.getByText('Sair');
     expect(logoutBtn).toBeInTheDocument();
   });
 
@@ -83,7 +84,7 @@ describe('Header Component', () => {
       </BrowserRouter>
     );
 
-    const logo = screen.getByText('Kushon');
+    const logo = testingLibrary.screen.getByText('Kushon');
     await user.click(logo);
 
     expect(mockNavigate).toHaveBeenCalledWith('/');
@@ -98,7 +99,7 @@ describe('Header Component', () => {
       </BrowserRouter>
     );
 
-    const logoutBtn = screen.getByText('Sair');
+    const logoutBtn = testingLibrary.screen.getByText('Sair');
     await user.click(logoutBtn);
 
     expect(mockNavigate).toHaveBeenCalledWith('/');

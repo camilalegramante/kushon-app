@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import * as testingLibrary from '@testing-library/dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 
@@ -42,7 +43,7 @@ describe('ProtectedRoute Component', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Carregando...')).toBeInTheDocument();
+    expect(testingLibrary.screen.getByText('Carregando...')).toBeInTheDocument();
   });
 
   it('should redirect to login when user is not authenticated', () => {
@@ -71,8 +72,8 @@ describe('ProtectedRoute Component', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Login Page')).toBeInTheDocument();
-    expect(screen.queryByText('Protected Content')).not.toBeInTheDocument();
+    expect(testingLibrary.screen.getByText('Login Page')).toBeInTheDocument();
+    expect(testingLibrary.screen.queryByText('Protected Content')).not.toBeInTheDocument();
   });
 
   it('should render children when user is authenticated', () => {
@@ -106,7 +107,7 @@ describe('ProtectedRoute Component', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Protected Content')).toBeInTheDocument();
+    expect(testingLibrary.screen.getByText('Protected Content')).toBeInTheDocument();
   });
 
   it('should redirect to user page when required role is missing', () => {
@@ -140,8 +141,8 @@ describe('ProtectedRoute Component', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('User Page')).toBeInTheDocument();
-    expect(screen.queryByText('Protected Content')).not.toBeInTheDocument();
+    expect(testingLibrary.screen.getByText('User Page')).toBeInTheDocument();
+    expect(testingLibrary.screen.queryByText('Protected Content')).not.toBeInTheDocument();
   });
 
   it('should render children when user has required role', () => {
@@ -174,7 +175,7 @@ describe('ProtectedRoute Component', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Protected Content')).toBeInTheDocument();
+    expect(testingLibrary.screen.getByText('Protected Content')).toBeInTheDocument();
   });
 
   it('should allow multiple roles', () => {
@@ -207,6 +208,6 @@ describe('ProtectedRoute Component', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Protected Content')).toBeInTheDocument();
+    expect(testingLibrary.screen.getByText('Protected Content')).toBeInTheDocument();
   });
 });

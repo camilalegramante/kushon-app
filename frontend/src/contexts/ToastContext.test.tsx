@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, act } from '@testing-library/react';
+import { render, act } from '@testing-library/react';
+import * as testingLibrary from '@testing-library/dom';
 import { ToastProvider, useToast } from './ToastContext';
 
 const TestComponent = () => {
@@ -68,7 +69,7 @@ describe('ToastContext', () => {
       </ToastProvider>
     );
 
-    expect(screen.getByTestId('toast-count')).toHaveTextContent('0');
+    expect(testingLibrary.screen.getByTestId('toast-count')).toHaveTextContent('0');
   });
 
   it('should show success toast', () => {
@@ -79,13 +80,13 @@ describe('ToastContext', () => {
     );
 
     act(() => {
-      const btn = screen.getByTestId('show-success');
+      const btn = testingLibrary.screen.getByTestId('show-success');
       btn.click();
     });
 
-    expect(screen.getByTestId('toast-count')).toHaveTextContent('1');
+    expect(testingLibrary.screen.getByTestId('toast-count')).toHaveTextContent('1');
 
-    const toast = screen.getByText('Success!');
+    const toast = testingLibrary.screen.getByText('Success!');
     expect(toast.parentElement).toHaveClass('toast-success');
   });
 
@@ -97,13 +98,13 @@ describe('ToastContext', () => {
     );
 
     act(() => {
-      const btn = screen.getByTestId('show-error');
+      const btn = testingLibrary.screen.getByTestId('show-error');
       btn.click();
     });
 
-    expect(screen.getByTestId('toast-count')).toHaveTextContent('1');
+    expect(testingLibrary.screen.getByTestId('toast-count')).toHaveTextContent('1');
 
-    const toast = screen.getByText('Error!');
+    const toast = testingLibrary.screen.getByText('Error!');
     expect(toast.parentElement).toHaveClass('toast-error');
   });
 
@@ -115,16 +116,16 @@ describe('ToastContext', () => {
     );
 
     act(() => {
-      screen.getByTestId('show-success').click();
-      screen.getByTestId('show-error').click();
-      screen.getByTestId('show-warning').click();
+      testingLibrary.screen.getByTestId('show-success').click();
+      testingLibrary.screen.getByTestId('show-error').click();
+      testingLibrary.screen.getByTestId('show-warning').click();
     });
 
-    expect(screen.getByTestId('toast-count')).toHaveTextContent('3');
+    expect(testingLibrary.screen.getByTestId('toast-count')).toHaveTextContent('3');
 
-    expect(screen.getByText('Success!')).toBeInTheDocument();
-    expect(screen.getByText('Error!')).toBeInTheDocument();
-    expect(screen.getByText('Warning!')).toBeInTheDocument();
+    expect(testingLibrary.screen.getByText('Success!')).toBeInTheDocument();
+    expect(testingLibrary.screen.getByText('Error!')).toBeInTheDocument();
+    expect(testingLibrary.screen.getByText('Warning!')).toBeInTheDocument();
   });
 
   it('should remove toast manually', () => {
@@ -135,19 +136,19 @@ describe('ToastContext', () => {
     );
 
     act(() => {
-      const btn = screen.getByTestId('show-success');
+      const btn = testingLibrary.screen.getByTestId('show-success');
       btn.click();
     });
 
-    expect(screen.getByTestId('toast-count')).toHaveTextContent('1');
+    expect(testingLibrary.screen.getByTestId('toast-count')).toHaveTextContent('1');
 
     act(() => {
-      const toastDiv = screen.getByText('Success!').closest('div');
+      const toastDiv = testingLibrary.screen.getByText('Success!').closest('div');
       const closeBtn = toastDiv?.querySelector('button');
       closeBtn?.click();
     });
 
-    expect(screen.getByTestId('toast-count')).toHaveTextContent('0');
+    expect(testingLibrary.screen.getByTestId('toast-count')).toHaveTextContent('0');
   });
 
   it('should auto-remove toast after default duration (4000ms)', () => {
@@ -158,17 +159,17 @@ describe('ToastContext', () => {
     );
 
     act(() => {
-      const btn = screen.getByTestId('show-success');
+      const btn = testingLibrary.screen.getByTestId('show-success');
       btn.click();
     });
 
-    expect(screen.getByTestId('toast-count')).toHaveTextContent('1');
+    expect(testingLibrary.screen.getByTestId('toast-count')).toHaveTextContent('1');
 
     act(() => {
       vi.advanceTimersByTime(4000);
     });
 
-    expect(screen.getByTestId('toast-count')).toHaveTextContent('0');
+    expect(testingLibrary.screen.getByTestId('toast-count')).toHaveTextContent('0');
   });
 
   it('should respect custom duration', () => {
@@ -179,23 +180,23 @@ describe('ToastContext', () => {
     );
 
     act(() => {
-      const btn = screen.getByTestId('show-custom-duration');
+      const btn = testingLibrary.screen.getByTestId('show-custom-duration');
       btn.click();
     });
 
-    expect(screen.getByTestId('toast-count')).toHaveTextContent('1');
+    expect(testingLibrary.screen.getByTestId('toast-count')).toHaveTextContent('1');
 
     act(() => {
       vi.advanceTimersByTime(1000);
     });
 
-    expect(screen.getByTestId('toast-count')).toHaveTextContent('1');
+    expect(testingLibrary.screen.getByTestId('toast-count')).toHaveTextContent('1');
 
     act(() => {
       vi.advanceTimersByTime(1000);
     });
 
-    expect(screen.getByTestId('toast-count')).toHaveTextContent('0');
+    expect(testingLibrary.screen.getByTestId('toast-count')).toHaveTextContent('0');
   });
 
   it('should show all toast types', () => {
@@ -206,17 +207,17 @@ describe('ToastContext', () => {
     );
 
     act(() => {
-      screen.getByTestId('show-success').click();
-      screen.getByTestId('show-error').click();
-      screen.getByTestId('show-warning').click();
-      screen.getByTestId('show-info').click();
+      testingLibrary.screen.getByTestId('show-success').click();
+      testingLibrary.screen.getByTestId('show-error').click();
+      testingLibrary.screen.getByTestId('show-warning').click();
+      testingLibrary.screen.getByTestId('show-info').click();
     });
 
-    expect(screen.getByTestId('toast-count')).toHaveTextContent('4');
+    expect(testingLibrary.screen.getByTestId('toast-count')).toHaveTextContent('4');
 
-    expect(screen.getByText('Success!').parentElement).toHaveClass('toast-success');
-    expect(screen.getByText('Error!').parentElement).toHaveClass('toast-error');
-    expect(screen.getByText('Warning!').parentElement).toHaveClass('toast-warning');
-    expect(screen.getByText('Info!').parentElement).toHaveClass('toast-info');
+    expect(testingLibrary.screen.getByText('Success!').parentElement).toHaveClass('toast-success');
+    expect(testingLibrary.screen.getByText('Error!').parentElement).toHaveClass('toast-error');
+    expect(testingLibrary.screen.getByText('Warning!').parentElement).toHaveClass('toast-warning');
+    expect(testingLibrary.screen.getByText('Info!').parentElement).toHaveClass('toast-info');
   });
 });

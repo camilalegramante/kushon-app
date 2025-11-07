@@ -1,14 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 
+interface SMTPConfig {
+  host: string | undefined;
+  port: number;
+  secure: boolean;
+  auth?: {
+    user: string;
+    pass: string;
+  };
+}
+
 @Injectable()
 export class EmailService {
   private transporter: nodemailer.Transporter;
 
   constructor() {
-    const config: any = {
+    const config: SMTPConfig = {
       host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT),
+      port: parseInt(process.env.SMTP_PORT || '587'),
       secure: process.env.SMTP_SECURE === 'true',
     };
 
@@ -26,7 +36,7 @@ export class EmailService {
     userEmail: string,
     userName: string,
     titleName: string,
-    volumeNumber: number
+    volumeNumber: number,
   ) {
     const subject = `Novo volume disponível: ${titleName}`;
 

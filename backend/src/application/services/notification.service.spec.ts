@@ -55,8 +55,8 @@ describe('NotificationService', () => {
     }).compile();
 
     service = module.get<NotificationService>(NotificationService);
-    prismaService = module.get(PrismaService) as jest.Mocked<PrismaService>;
-    emailService = module.get(EmailService) as jest.Mocked<EmailService>;
+    prismaService = module.get(PrismaService);
+    emailService = module.get(EmailService);
   });
 
   afterEach(() => {
@@ -69,10 +69,15 @@ describe('NotificationService', () => {
         mockNotificationPreference,
       );
 
-      const result = await service.getNotificationPreference('user-123', 'title-456');
+      const result = await service.getNotificationPreference(
+        'user-123',
+        'title-456',
+      );
 
       expect(result).toEqual(mockNotificationPreference);
-      expect(prismaService.notificationPreference.findUnique).toHaveBeenCalledWith({
+      expect(
+        prismaService.notificationPreference.findUnique,
+      ).toHaveBeenCalledWith({
         where: {
           userId_titleId: {
             userId: 'user-123',
@@ -85,7 +90,10 @@ describe('NotificationService', () => {
     it('should return null when preference does not exist', async () => {
       prismaService.notificationPreference.findUnique.mockResolvedValue(null);
 
-      const result = await service.getNotificationPreference('user-123', 'title-456');
+      const result = await service.getNotificationPreference(
+        'user-123',
+        'title-456',
+      );
 
       expect(result).toBeNull();
     });
@@ -93,10 +101,19 @@ describe('NotificationService', () => {
 
   describe('updateNotificationPreference', () => {
     it('should update existing notification preference', async () => {
-      const updatedPreference = { ...mockNotificationPreference, emailOnNewVolume: false };
-      prismaService.notificationPreference.upsert.mockResolvedValue(updatedPreference);
+      const updatedPreference = {
+        ...mockNotificationPreference,
+        emailOnNewVolume: false,
+      };
+      prismaService.notificationPreference.upsert.mockResolvedValue(
+        updatedPreference,
+      );
 
-      const result = await service.updateNotificationPreference('user-123', 'title-456', false);
+      const result = await service.updateNotificationPreference(
+        'user-123',
+        'title-456',
+        false,
+      );
 
       expect(result).toEqual(updatedPreference);
       expect(prismaService.notificationPreference.upsert).toHaveBeenCalledWith({
@@ -119,9 +136,15 @@ describe('NotificationService', () => {
 
     it('should create new preference when it does not exist', async () => {
       const newPreference = { ...mockNotificationPreference };
-      prismaService.notificationPreference.upsert.mockResolvedValue(newPreference);
+      prismaService.notificationPreference.upsert.mockResolvedValue(
+        newPreference,
+      );
 
-      const result = await service.updateNotificationPreference('user-123', 'title-456', true);
+      const result = await service.updateNotificationPreference(
+        'user-123',
+        'title-456',
+        true,
+      );
 
       expect(result).toEqual(newPreference);
       expect(prismaService.notificationPreference.upsert).toHaveBeenCalled();
@@ -144,12 +167,16 @@ describe('NotificationService', () => {
         },
       ];
 
-      prismaService.notificationPreference.findMany.mockResolvedValue(mockPreferences);
+      prismaService.notificationPreference.findMany.mockResolvedValue(
+        mockPreferences,
+      );
       emailService.sendNewVolumeNotification.mockResolvedValue(undefined);
 
       await service.notifyUsersOnNewVolume('title-456', 5);
 
-      expect(prismaService.notificationPreference.findMany).toHaveBeenCalledWith({
+      expect(
+        prismaService.notificationPreference.findMany,
+      ).toHaveBeenCalledWith({
         where: {
           titleId: 'title-456',
           emailOnNewVolume: true,
@@ -177,7 +204,9 @@ describe('NotificationService', () => {
         },
       ];
 
-      prismaService.notificationPreference.findMany.mockResolvedValue(mockPreferences);
+      prismaService.notificationPreference.findMany.mockResolvedValue(
+        mockPreferences,
+      );
       emailService.sendNewVolumeNotification.mockRejectedValue(
         new Error('SMTP error'),
       );
@@ -198,15 +227,6 @@ describe('NotificationService', () => {
     });
 
     it('should not send emails to users with notification disabled', async () => {
-      const mockPreferencesDisabled = [
-        {
-          ...mockNotificationPreference,
-          emailOnNewVolume: false,
-          user: mockUser,
-          title: mockTitle,
-        },
-      ];
-
       prismaService.notificationPreference.findMany.mockResolvedValue([]);
 
       await service.notifyUsersOnNewVolume('title-456', 5);

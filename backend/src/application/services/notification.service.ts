@@ -6,7 +6,7 @@ import { EmailService } from './email.service';
 export class NotificationService {
   constructor(
     private prisma: PrismaService,
-    private emailService: EmailService
+    private emailService: EmailService,
   ) {}
 
   async getNotificationPreference(userId: string, titleId: string) {
@@ -14,28 +14,32 @@ export class NotificationService {
       where: {
         userId_titleId: {
           userId,
-          titleId
-        }
-      }
+          titleId,
+        },
+      },
     });
   }
 
-  async updateNotificationPreference(userId: string, titleId: string, emailOnNewVolume: boolean) {
+  async updateNotificationPreference(
+    userId: string,
+    titleId: string,
+    emailOnNewVolume: boolean,
+  ) {
     return await this.prisma.notificationPreference.upsert({
       where: {
         userId_titleId: {
           userId,
-          titleId
-        }
+          titleId,
+        },
       },
       update: {
-        emailOnNewVolume
+        emailOnNewVolume,
       },
       create: {
         userId,
         titleId,
-        emailOnNewVolume
-      }
+        emailOnNewVolume,
+      },
     });
   }
 
@@ -43,12 +47,12 @@ export class NotificationService {
     const preferences = await this.prisma.notificationPreference.findMany({
       where: {
         titleId,
-        emailOnNewVolume: true
+        emailOnNewVolume: true,
       },
       include: {
         user: true,
-        title: true
-      }
+        title: true,
+      },
     });
 
     for (const preference of preferences) {
@@ -57,12 +61,17 @@ export class NotificationService {
           preference.user.email,
           preference.user.name,
           preference.title.name,
-          volumeNumber
+          volumeNumber,
         );
 
-        console.log(`Email enviado para ${preference.user.email} sobre volume ${volumeNumber} de ${preference.title.name}`);
+        console.log(
+          `Email enviado para ${preference.user.email} sobre volume ${volumeNumber} de ${preference.title.name}`,
+        );
       } catch (error) {
-        console.error(`Erro ao enviar email para ${preference.user.email}:`, error);
+        console.error(
+          `Erro ao enviar email para ${preference.user.email}:`,
+          error,
+        );
       }
     }
   }

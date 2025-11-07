@@ -9,12 +9,12 @@ import { NotificationService } from '../../application/services/notification.ser
 export class TitleRepository {
   constructor(
     private prisma: PrismaService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
   ) {}
 
   async create(createTitleDto: CreateTitleDto): Promise<Title> {
     const slug = this.generateSlug(createTitleDto.name);
-    
+
     const createdTitle = await this.prisma.title.create({
       data: {
         name: createTitleDto.name,
@@ -25,16 +25,16 @@ export class TitleRepository {
         coverImage: createTitleDto.coverImage,
         publisherId: createTitleDto.publisherId,
         volumes: {
-          create: createTitleDto.volumes.map(volume => ({
+          create: createTitleDto.volumes.map((volume) => ({
             number: volume.number,
             title: volume.title,
             coverImage: volume.coverImage,
-          }))
-        }
+          })),
+        },
       },
       include: {
-        volumes: true
-      }
+        volumes: true,
+      },
     });
 
     return new Title(
@@ -48,7 +48,7 @@ export class TitleRepository {
       createdTitle.genre,
       createdTitle.coverImage,
       createdTitle.createdAt,
-      createdTitle.updatedAt
+      createdTitle.updatedAt,
     );
   }
 
@@ -56,25 +56,28 @@ export class TitleRepository {
     const titles = await this.prisma.title.findMany({
       include: {
         volumes: {
-          orderBy: { number: 'asc' }
-        }
+          orderBy: { number: 'asc' },
+        },
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
 
-    return titles.map(title => new Title(
-      title.id,
-      title.name,
-      title.slug,
-      title.publisherId,
-      title.status as any,
-      title.synopsis,
-      title.author,
-      title.genre,
-      title.coverImage,
-      title.createdAt,
-      title.updatedAt
-    ));
+    return titles.map(
+      (title) =>
+        new Title(
+          title.id,
+          title.name,
+          title.slug,
+          title.publisherId,
+          title.status as any,
+          title.synopsis,
+          title.author,
+          title.genre,
+          title.coverImage,
+          title.createdAt,
+          title.updatedAt,
+        ),
+    );
   }
 
   async findById(id: string): Promise<Title | null> {
@@ -82,9 +85,9 @@ export class TitleRepository {
       where: { id },
       include: {
         volumes: {
-          orderBy: { number: 'asc' }
-        }
-      }
+          orderBy: { number: 'asc' },
+        },
+      },
     });
 
     if (!title) return null;
@@ -100,33 +103,41 @@ export class TitleRepository {
       title.genre,
       title.coverImage,
       title.createdAt,
-      title.updatedAt
+      title.updatedAt,
     );
   }
 
   async findVolumes(titleId: string): Promise<Volume[]> {
     const volumes = await this.prisma.volume.findMany({
       where: { titleId },
-      orderBy: { number: 'asc' }
+      orderBy: { number: 'asc' },
     });
 
-    return volumes.map(volume => new Volume(
-      volume.id,
-      volume.number,
-      volume.titleId,
-      volume.title,
-      volume.coverImage,
-      volume.releaseAt,
-      volume.createdAt,
-      volume.updatedAt
-    ));
+    return volumes.map(
+      (volume) =>
+        new Volume(
+          volume.id,
+          volume.number,
+          volume.titleId,
+          volume.title,
+          volume.coverImage,
+          volume.releaseAt,
+          volume.createdAt,
+          volume.updatedAt,
+        ),
+    );
   }
 
-  async update(id: string, updateTitleDto: UpdateTitleDto): Promise<Title | null> {
+  async update(
+    id: string,
+    updateTitleDto: UpdateTitleDto,
+  ): Promise<Title | null> {
     const existingTitle = await this.prisma.title.findUnique({ where: { id } });
     if (!existingTitle) return null;
 
-    const slug = updateTitleDto.name ? this.generateSlug(updateTitleDto.name) : existingTitle.slug;
+    const slug = updateTitleDto.name
+      ? this.generateSlug(updateTitleDto.name)
+      : existingTitle.slug;
 
     const updatedTitle = await this.prisma.title.update({
       where: { id },
@@ -142,35 +153,41 @@ export class TitleRepository {
       },
       include: {
         volumes: {
-          orderBy: { number: 'asc' }
-        }
-      }
+          orderBy: { number: 'asc' },
+        },
+      },
     });
 
     if (updateTitleDto.volumes && Array.isArray(updateTitleDto.volumes)) {
       for (const vol of updateTitleDto.volumes) {
         const existingVolume = await this.prisma.volume.findFirst({
-          where: { titleId: id, number: vol.number }
+          where: { titleId: id, number: vol.number },
         });
         if (!existingVolume) {
-          const newVolume = await this.prisma.volume.create({
+          await this.prisma.volume.create({
             data: {
               number: vol.number,
               title: vol.title,
               coverImage: vol.coverImage,
-              titleId: id
-            }
+              titleId: id,
+            },
           });
 
           try {
-            await this.notificationService.notifyUsersOnNewVolume(id, vol.number);
+            await this.notificationService.notifyUsersOnNewVolume(
+              id,
+              vol.number,
+            );
           } catch (error) {
-            console.error(`Erro ao enviar notificações para volume ${vol.number}:`, error);
+            console.error(
+              `Erro ao enviar notificações para volume ${vol.number}:`,
+              error,
+            );
           }
         } else if (vol.coverImage) {
           await this.prisma.volume.update({
             where: { id: existingVolume.id },
-            data: { coverImage: vol.coverImage }
+            data: { coverImage: vol.coverImage },
           });
         }
       }
@@ -187,60 +204,55 @@ export class TitleRepository {
       updatedTitle.genre,
       updatedTitle.coverImage,
       updatedTitle.createdAt,
-      updatedTitle.updatedAt
+      updatedTitle.updatedAt,
     );
   }
 
   async updateMainCover(titleId: string, coverImage: string): Promise<void> {
-    try {
-      await this.prisma.title.update({
-        where: { id: titleId },
-        data: { coverImage: coverImage }
-      });
-    } catch (error) {
-      throw error;
-    }
+    await this.prisma.title.update({
+      where: { id: titleId },
+      data: { coverImage: coverImage },
+    });
   }
 
-  async updateVolumeCover(volumeNumber: number, titleId: string, coverImage: string): Promise<void> {
-    try {
-      const existingVolume = await this.prisma.volume.findFirst({
-        where: {
-          titleId: titleId,
-          number: volumeNumber
-        }
-      });
+  async updateVolumeCover(
+    volumeNumber: number,
+    titleId: string,
+    coverImage: string,
+  ): Promise<void> {
+    const existingVolume = await this.prisma.volume.findFirst({
+      where: {
+        titleId: titleId,
+        number: volumeNumber,
+      },
+    });
 
-      if (!existingVolume) {
-        return;
-      }
-
-      const result = await this.prisma.volume.update({
-        where: {
-          id: existingVolume.id
-        },
-        data: {
-          coverImage: coverImage
-        }
-      });
-
-    } catch (error) {
-      throw error;
+    if (!existingVolume) {
+      return;
     }
+
+    await this.prisma.volume.update({
+      where: {
+        id: existingVolume.id,
+      },
+      data: {
+        coverImage: coverImage,
+      },
+    });
   }
 
   async delete(id: string): Promise<boolean> {
     try {
       await this.prisma.volume.deleteMany({
-        where: { titleId: id }
+        where: { titleId: id },
       });
 
       await this.prisma.title.delete({
-        where: { id }
+        where: { id },
       });
 
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

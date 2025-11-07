@@ -17,13 +17,13 @@ export class UserRepository {
         password: hashedPassword,
         userRoles: {
           create: {
-            role: 'USER'
-          }
-        }
+            role: 'USER',
+          },
+        },
       },
       include: {
-        userRoles: true
-      }
+        userRoles: true,
+      },
     });
 
     return new User(
@@ -32,7 +32,7 @@ export class UserRepository {
       createdUser.email,
       createdUser.password,
       createdUser.createdAt,
-      createdUser.updatedAt
+      createdUser.updatedAt,
     );
   }
 
@@ -40,8 +40,8 @@ export class UserRepository {
     const user = await this.prisma.user.findUnique({
       where: { email },
       include: {
-        userRoles: true
-      }
+        userRoles: true,
+      },
     });
 
     if (!user) return null;
@@ -52,7 +52,7 @@ export class UserRepository {
       user.email,
       user.password,
       user.createdAt,
-      user.updatedAt
+      user.updatedAt,
     );
   }
 
@@ -60,8 +60,8 @@ export class UserRepository {
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: {
-        userRoles: true
-      }
+        userRoles: true,
+      },
     });
 
     if (!user) return null;
@@ -72,7 +72,7 @@ export class UserRepository {
       user.email,
       user.password,
       user.createdAt,
-      user.updatedAt
+      user.updatedAt,
     );
   }
 
@@ -84,8 +84,8 @@ export class UserRepository {
     const userRole = await this.prisma.userRole.findFirst({
       where: {
         userId,
-        role
-      }
+        role,
+      },
     });
 
     return !!userRole;
@@ -93,9 +93,9 @@ export class UserRepository {
 
   async getUserRoles(userId: string): Promise<string[]> {
     const userRoles = await this.prisma.userRole.findMany({
-      where: { userId }
+      where: { userId },
     });
 
-    return userRoles.map(ur => ur.role);
+    return userRoles.map((ur) => ur.role);
   }
 }

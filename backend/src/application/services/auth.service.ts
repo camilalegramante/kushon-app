@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from '../../infra/repositories/user.repository';
 import { RegisterDto } from '../dtos/auth/register.dto';
@@ -22,7 +26,9 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto): Promise<AuthResponse> {
-    const existingUser = await this.userRepository.findByEmail(registerDto.email);
+    const existingUser = await this.userRepository.findByEmail(
+      registerDto.email,
+    );
     if (existingUser) {
       throw new ConflictException('Email já está em uso');
     }
@@ -30,7 +36,7 @@ export class AuthService {
     const user = await this.userRepository.create(
       registerDto.name,
       registerDto.email,
-      registerDto.password
+      registerDto.password,
     );
 
     const roles = await this.userRepository.getUserRoles(user.id);
@@ -38,7 +44,7 @@ export class AuthService {
     const payload = {
       sub: user.id,
       email: user.email,
-      roles
+      roles,
     };
     const access_token = this.jwtService.sign(payload);
 
@@ -48,8 +54,8 @@ export class AuthService {
         id: user.id,
         name: user.name,
         email: user.email,
-        roles
-      }
+        roles,
+      },
     };
   }
 
@@ -59,7 +65,10 @@ export class AuthService {
       throw new UnauthorizedException('Credenciais inválidas');
     }
 
-    const isPasswordValid = await this.userRepository.validatePassword(user, loginDto.password);
+    const isPasswordValid = await this.userRepository.validatePassword(
+      user,
+      loginDto.password,
+    );
     if (!isPasswordValid) {
       throw new UnauthorizedException('Credenciais inválidas');
     }
@@ -69,7 +78,7 @@ export class AuthService {
     const payload = {
       sub: user.id,
       email: user.email,
-      roles
+      roles,
     };
     const access_token = this.jwtService.sign(payload);
 
@@ -79,8 +88,8 @@ export class AuthService {
         id: user.id,
         name: user.name,
         email: user.email,
-        roles
-      }
+        roles,
+      },
     };
   }
 
@@ -96,7 +105,7 @@ export class AuthService {
       id: user.id,
       name: user.name,
       email: user.email,
-      roles
+      roles,
     };
   }
 }

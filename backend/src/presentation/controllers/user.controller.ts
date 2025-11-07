@@ -1,4 +1,12 @@
-import { Controller, Put, Get, Body, Param, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Put,
+  Get,
+  Body,
+  Param,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { UserService } from '../../application/services/user.service';
 import { UpdateVolumeProgressDto } from '../../application/dtos/user/update-volume-progress.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -12,38 +20,35 @@ export class UserController {
   async updateVolumeProgress(
     @Request() req,
     @Param('titleId') titleId: string,
-    @Body() updateData: UpdateVolumeProgressDto
+    @Body() updateData: UpdateVolumeProgressDto,
   ) {
     try {
       const result = await this.userService.updateUserVolumeProgress(
         req.user.id,
         titleId,
-        updateData
+        updateData,
       );
       return result;
     } catch (error) {
       return {
         success: false,
-        message: error.message || 'Erro ao atualizar progresso'
+        message: error.message || 'Erro ao atualizar progresso',
       };
     }
   }
 
   @Get('titles/:titleId/volumes')
-  async getVolumeProgress(
-    @Request() req,
-    @Param('titleId') titleId: string
-  ) {
+  async getVolumeProgress(@Request() req, @Param('titleId') titleId: string) {
     try {
       const result = await this.userService.getUserVolumeProgress(
         req.user.id,
-        titleId
+        titleId,
       );
       return result;
     } catch (error) {
       return {
         success: false,
-        message: error.message || 'Erro ao buscar progresso'
+        message: error.message || 'Erro ao buscar progresso',
       };
     }
   }

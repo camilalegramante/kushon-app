@@ -100,9 +100,7 @@ describe('Kushon API (e2e)', () => {
     });
 
     it('should reject request without token', () => {
-      return request(app.getHttpServer())
-        .get('/api/auth/me')
-        .expect(401);
+      return request(app.getHttpServer()).get('/api/auth/me').expect(401);
     });
 
     it('should reject request with invalid token', () => {
@@ -114,7 +112,6 @@ describe('Kushon API (e2e)', () => {
   });
 
   describe('Titles Management', () => {
-    let publisherId: string;
     let titleId: string;
 
     it('should get all titles (no auth required)', () => {
@@ -132,9 +129,6 @@ describe('Kushon API (e2e)', () => {
         .expect(200)
         .expect((res) => {
           expect(Array.isArray(res.body.data)).toBe(true);
-          if (res.body.data.length > 0) {
-            publisherId = res.body.data[0].id;
-          }
         });
     });
 
@@ -152,5 +146,4 @@ describe('Kushon API (e2e)', () => {
         });
     });
   });
-
 });

@@ -43,7 +43,7 @@ describe('UserService', () => {
     }).compile();
 
     service = module.get<UserService>(UserService);
-    prismaService = module.get(PrismaService) as jest.Mocked<PrismaService>;
+    prismaService = module.get(PrismaService);
   });
 
   afterEach(() => {
@@ -72,12 +72,19 @@ describe('UserService', () => {
       prismaService.$transaction.mockImplementation(async (callback) => {
         return callback({
           userVolume: {
-            upsert: jest.fn().mockResolvedValueOnce(mockUpsertResults[0]).mockResolvedValueOnce(mockUpsertResults[1]),
+            upsert: jest
+              .fn()
+              .mockResolvedValueOnce(mockUpsertResults[0])
+              .mockResolvedValueOnce(mockUpsertResults[1]),
           },
         });
       });
 
-      const result = await service.updateUserVolumeProgress(userId, titleId, updateDto);
+      const result = await service.updateUserVolumeProgress(
+        userId,
+        titleId,
+        updateDto,
+      );
 
       expect(result.success).toBe(true);
       expect(prismaService.title.findUnique).toHaveBeenCalledWith({
@@ -98,9 +105,7 @@ describe('UserService', () => {
       prismaService.title.findUnique.mockResolvedValue(mockTitle);
 
       const invalidUpdateDto: UpdateVolumeProgressDto = {
-        volumes: [
-          { volumeId: 'invalid-vol-id', owned: true },
-        ],
+        volumes: [{ volumeId: 'invalid-vol-id', owned: true }],
       };
 
       await expect(

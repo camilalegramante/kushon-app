@@ -1,6 +1,5 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { v2 as cloudinary } from 'cloudinary';
-import { Readable } from 'stream';
 
 @Injectable()
 export class UploadService {
@@ -12,7 +11,10 @@ export class UploadService {
     });
   }
 
-  async uploadImage(file: Express.Multer.File, folder: string = 'kushon'): Promise<string> {
+  async uploadImage(
+    file: Express.Multer.File,
+    folder: string = 'kushon',
+  ): Promise<string> {
     if (!file) {
       throw new BadRequestException('Nenhum arquivo fornecido');
     }
@@ -32,23 +34,29 @@ export class UploadService {
           },
           (error, result) => {
             if (error) {
-              reject(new BadRequestException(`Erro ao fazer upload: ${error.message}`));
+              reject(
+                new BadRequestException(
+                  `Erro ao fazer upload: ${error.message}`,
+                ),
+              );
             } else {
               resolve(result.secure_url);
             }
-          }
+          },
         );
 
         uploadStream.end(file.buffer);
       });
     } catch (error) {
-      throw new BadRequestException(`Erro ao fazer upload da imagem: ${error.message}`);
+      throw new BadRequestException(
+        `Erro ao fazer upload da imagem: ${error.message}`,
+      );
     }
   }
 
   async uploadMultipleImages(
     files: Express.Multer.File[],
-    folder: string = 'kushon'
+    folder: string = 'kushon',
   ): Promise<Map<string, string>> {
     const uploadPromises = files.map(async (file) => {
       const url = await this.uploadImage(file, folder);

@@ -7,13 +7,13 @@ export class PublisherRepository {
 
   async create(data: { name: string; country?: string }) {
     return await this.prisma.publisher.create({
-      data
+      data,
     });
   }
 
   async findAll() {
     return await this.prisma.publisher.findMany({
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
     });
   }
 
@@ -23,10 +23,10 @@ export class PublisherRepository {
       include: {
         titles: {
           include: {
-            volumes: true
-          }
-        }
-      }
+            volumes: true,
+          },
+        },
+      },
     });
   }
 }

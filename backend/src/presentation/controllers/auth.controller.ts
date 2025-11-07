@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Get, UseGuards, Request, HttpException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  UseGuards,
+  Request,
+  HttpException,
+} from '@nestjs/common';
 import { AuthService } from '../../application/services/auth.service';
 import { RegisterDto } from '../../application/dtos/auth/register.dto';
 import { LoginDto } from '../../application/dtos/auth/login.dto';
@@ -15,7 +23,7 @@ export class AuthController {
       return {
         success: true,
         data: result,
-        message: 'Usuário registrado com sucesso'
+        message: 'Usuário registrado com sucesso',
       };
     } catch (error) {
       if (error instanceof HttpException) {
@@ -33,7 +41,7 @@ export class AuthController {
       return {
         success: true,
         data: result,
-        message: 'Login realizado com sucesso'
+        message: 'Login realizado com sucesso',
       };
     } catch (error) {
       if (error instanceof HttpException) {
@@ -50,7 +58,7 @@ export class AuthController {
     return {
       success: true,
       data: req.user,
-      message: 'Perfil do usuário'
+      message: 'Perfil do usuário',
     };
   }
 }

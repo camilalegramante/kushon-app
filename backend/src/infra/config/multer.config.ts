@@ -18,11 +18,14 @@ export const multerConfig: MulterOptions = {
   }),
   fileFilter: (req, file, cb) => {
     const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    
+
     if (allowedMimes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new BadRequestException('Apenas arquivos de imagem são permitidos'), false);
+      cb(
+        new BadRequestException('Apenas arquivos de imagem são permitidos'),
+        false,
+      );
     }
   },
   limits: {

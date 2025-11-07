@@ -12,11 +12,18 @@ export class EnvironmentValidation {
     this.logger.log('🔍 Validating environment variables...');
 
     const criticalEnvVars = ['DATABASE_URL', 'JWT_SECRET'];
-    const optionalEnvVars = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_FROM', 'FRONTEND_URL'];
+    const optionalEnvVars = [
+      'SMTP_HOST',
+      'SMTP_PORT',
+      'SMTP_FROM',
+      'FRONTEND_URL',
+    ];
 
     this.logger.log('═'.repeat(60));
     this.logger.log('📦 ENVIRONMENT INFORMATION:');
-    this.logger.log(`   Node Environment: ${process.env.NODE_ENV || 'development'}`);
+    this.logger.log(
+      `   Node Environment: ${process.env.NODE_ENV || 'development'}`,
+    );
     this.logger.log(`   Port: ${process.env.PORT || 3000}`);
     this.logger.log(`   Platform: ${process.platform}`);
     this.logger.log(`   Node Version: ${process.version}`);
@@ -43,7 +50,9 @@ export class EnvironmentValidation {
 
     if (missingCritical.length > 0) {
       this.logger.error('═'.repeat(60));
-      this.logger.error('❌ CRITICAL ERROR: Missing required environment variables!');
+      this.logger.error(
+        '❌ CRITICAL ERROR: Missing required environment variables!',
+      );
       this.logger.error(`   Variables: ${missingCritical.join(', ')}`);
       this.logger.error('═'.repeat(60));
       throw new Error(
@@ -54,7 +63,9 @@ export class EnvironmentValidation {
 
     if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
       this.logger.error('❌ JWT_SECRET must be at least 32 characters long');
-      this.logger.error(`   Current length: ${process.env.JWT_SECRET?.length || 0}`);
+      this.logger.error(
+        `   Current length: ${process.env.JWT_SECRET?.length || 0}`,
+      );
       throw new Error(
         'JWT_SECRET must be at least 32 characters long for security',
       );
@@ -81,7 +92,7 @@ export class EnvironmentValidation {
         ? envVar.includes('SECRET') || envVar.includes('PASS')
           ? '***'
           : envVar === 'DATABASE_URL'
-            ? this.maskDatabaseUrl(process.env[envVar]!)
+            ? this.maskDatabaseUrl(process.env[envVar])
             : process.env[envVar]
         : 'NOT SET';
       this.logger.log(`   ${status} ${envVar}: ${value}`);
@@ -106,14 +117,16 @@ export class EnvironmentValidation {
     }
   }
 
-  private static extractDbInfo(url: string): { host: string; port: string; database: string; user: string } | null {
+  private static extractDbInfo(
+    url: string,
+  ): { host: string; port: string; database: string; user: string } | null {
     try {
       const urlObj = new URL(url);
       return {
         host: urlObj.hostname,
         port: urlObj.port || '5432',
         database: urlObj.pathname.split('/')[1]?.split('?')[0] || 'unknown',
-        user: urlObj.username || 'unknown'
+        user: urlObj.username || 'unknown',
       };
     } catch {
       return null;

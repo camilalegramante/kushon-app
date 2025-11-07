@@ -10,7 +10,7 @@ export class PublisherController {
     const publishers = await this.publisherRepository.findAll();
     return {
       success: true,
-      data: publishers
+      data: publishers,
     };
   }
 
@@ -20,7 +20,7 @@ export class PublisherController {
     return {
       success: true,
       data: publisher,
-      message: 'Editora criada com sucesso'
+      message: 'Editora criada com sucesso',
     };
   }
 }

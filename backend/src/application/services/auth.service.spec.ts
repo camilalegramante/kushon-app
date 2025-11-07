@@ -48,8 +48,8 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    userRepository = module.get(UserRepository) as jest.Mocked<UserRepository>;
-    jwtService = module.get(JwtService) as jest.Mocked<JwtService>;
+    userRepository = module.get(UserRepository);
+    jwtService = module.get(JwtService);
   });
 
   afterEach(() => {
@@ -80,7 +80,9 @@ describe('AuthService', () => {
           roles: mockRoles,
         },
       });
-      expect(userRepository.findByEmail).toHaveBeenCalledWith(registerDto.email);
+      expect(userRepository.findByEmail).toHaveBeenCalledWith(
+        registerDto.email,
+      );
       expect(userRepository.create).toHaveBeenCalledWith(
         registerDto.name,
         registerDto.email,
@@ -169,7 +171,7 @@ describe('AuthService', () => {
       userRepository.findById.mockResolvedValue(mockUser);
       userRepository.getUserRoles.mockResolvedValue(mockRoles);
 
-      const result = await service.validateUser(userId);
+      const result: unknown = await service.validateUser(userId);
 
       expect(result).toEqual({
         id: mockUser.id,
@@ -183,7 +185,7 @@ describe('AuthService', () => {
     it('should return null when user does not exist', async () => {
       userRepository.findById.mockResolvedValue(null);
 
-      const result = await service.validateUser(userId);
+      const result: unknown = await service.validateUser(userId);
 
       expect(result).toBeNull();
       expect(userRepository.getUserRoles).not.toHaveBeenCalled();

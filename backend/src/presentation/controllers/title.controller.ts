@@ -1,7 +1,15 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  UseInterceptors,
+  UploadedFiles,
+} from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 import { TitleRepository } from '../../infra/repositories/title.repository';
 import { UploadService } from '../../infra/services/upload.service';
 import { CreateTitleDto } from '../../application/dtos/create-title.dto';
@@ -11,25 +19,33 @@ import { UpdateTitleDto } from '../../application/dtos/update-title.dto';
 export class TitleController {
   constructor(
     private readonly titleRepository: TitleRepository,
-    private readonly uploadService: UploadService
+    private readonly uploadService: UploadService,
   ) {}
 
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
-  async create(@Body('data') data: string, @UploadedFiles() files: Express.Multer.File[]) {
+  async create(
+    @Body('data') data: string,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
     try {
       const createTitleDto: CreateTitleDto = JSON.parse(data);
 
       if (files && files.length > 0) {
-        const uploadedUrls = await this.uploadService.uploadMultipleImages(files, 'kushon/titles');
+        const uploadedUrls = await this.uploadService.uploadMultipleImages(
+          files,
+          'kushon/titles',
+        );
 
-        const mainCover = files.find(file => file.fieldname === 'mainCover');
+        const mainCover = files.find((file) => file.fieldname === 'mainCover');
         if (mainCover) {
           createTitleDto.coverImage = uploadedUrls.get('mainCover');
         }
 
         for (const volume of createTitleDto.volumes) {
-          const volumeFile = files.find(file => file.fieldname === `volume_${volume.number}`);
+          const volumeFile = files.find(
+            (file) => file.fieldname === `volume_${volume.number}`,
+          );
           if (volumeFile) {
             volume.coverImage = uploadedUrls.get(`volume_${volume.number}`);
           }
@@ -40,12 +56,12 @@ export class TitleController {
       return {
         success: true,
         data: title,
-        message: 'Título criado com sucesso'
+        message: 'Título criado com sucesso',
       };
     } catch (error) {
       return {
         success: false,
-        message: 'Erro ao criar título: ' + error.message
+        message: 'Erro ao criar título: ' + error.message,
       };
     }
   }
@@ -55,7 +71,7 @@ export class TitleController {
     const titles = await this.titleRepository.findAll();
     return {
       success: true,
-      data: titles
+      data: titles,
     };
   }
 
@@ -65,13 +81,13 @@ export class TitleController {
     if (!title) {
       return {
         success: false,
-        message: 'Título não encontrado'
+        message: 'Título não encontrado',
       };
     }
 
     return {
       success: true,
-      data: title
+      data: title,
     };
   }
 
@@ -80,7 +96,7 @@ export class TitleController {
     const volumes = await this.titleRepository.findVolumes(id);
     return {
       success: true,
-      data: volumes
+      data: volumes,
     };
   }
 
@@ -90,7 +106,7 @@ export class TitleController {
     @Param('id') id: string,
     @Body('data') data?: string,
     @Body() directBody?: any,
-    @UploadedFiles() files?: Express.Multer.File[]
+    @UploadedFiles() files?: Express.Multer.File[],
   ) {
     try {
       let updateTitleDto: UpdateTitleDto;
@@ -104,7 +120,7 @@ export class TitleController {
       if (!updateTitleDto || Object.keys(updateTitleDto).length === 0) {
         return {
           success: false,
-          message: 'Nenhum dado fornecido para atualização'
+          message: 'Nenhum dado fornecido para atualização',
         };
       }
 
@@ -113,14 +129,17 @@ export class TitleController {
       if (!title) {
         return {
           success: false,
-          message: 'Título não encontrado'
+          message: 'Título não encontrado',
         };
       }
 
       if (files && files.length > 0) {
-        const uploadedUrls = await this.uploadService.uploadMultipleImages(files, 'kushon/titles');
+        const uploadedUrls = await this.uploadService.uploadMultipleImages(
+          files,
+          'kushon/titles',
+        );
 
-        const mainCover = files.find(file => file.fieldname === 'mainCover');
+        const mainCover = files.find((file) => file.fieldname === 'mainCover');
         if (mainCover) {
           const coverUrl = uploadedUrls.get('mainCover');
           await this.titleRepository.updateMainCover(id, coverUrl);
@@ -131,7 +150,11 @@ export class TitleController {
             const volumeNumber = parseInt(file.fieldname.split('_')[1]);
             const coverUrl = uploadedUrls.get(file.fieldname);
 
-            await this.titleRepository.updateVolumeCover(volumeNumber, id, coverUrl);
+            await this.titleRepository.updateVolumeCover(
+              volumeNumber,
+              id,
+              coverUrl,
+            );
           }
         }
       }
@@ -139,12 +162,12 @@ export class TitleController {
       return {
         success: true,
         data: title,
-        message: 'Título atualizado com sucesso'
+        message: 'Título atualizado com sucesso',
       };
     } catch (error) {
       return {
         success: false,
-        message: 'Erro ao atualizar título: ' + error.message
+        message: 'Erro ao atualizar título: ' + error.message,
       };
     }
   }
@@ -157,20 +180,19 @@ export class TitleController {
       if (!deleted) {
         return {
           success: false,
-          message: 'Título não encontrado ou não foi possível excluir'
+          message: 'Título não encontrado ou não foi possível excluir',
         };
       }
 
       return {
         success: true,
-        message: 'Título excluído com sucesso'
+        message: 'Título excluído com sucesso',
       };
     } catch (error) {
       return {
         success: false,
-        message: 'Erro ao excluir título: ' + error.message
+        message: 'Erro ao excluir título: ' + error.message,
       };
     }
   }
-
 }

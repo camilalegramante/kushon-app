@@ -23,12 +23,13 @@ export class HttpLoggerMiddleware implements NestMiddleware {
     res.send = function (body: any): Response {
       res.send = originalSend;
       const responseTime = Date.now() - startTime;
-      const statusCode = res.statusCode;
-      const statusEmoji = statusCode >= 500 ? '❌' : statusCode >= 400 ? '⚠️' : '✅';
+      const { statusCode } = res;
+      const statusEmoji =
+        statusCode >= 500 ? '❌' : statusCode >= 400 ? '⚠️' : '✅';
 
       const logger = new Logger('HTTP');
       logger.log(
-        `${statusEmoji} ${method} ${originalUrl} - ${statusCode} - ${responseTime}ms`
+        `${statusEmoji} ${method} ${originalUrl} - ${statusCode} - ${responseTime}ms`,
       );
 
       return res.send(body);
@@ -42,7 +43,13 @@ export class HttpLoggerMiddleware implements NestMiddleware {
       return {};
     }
 
-    const sensitiveFields = ['password', 'token', 'secret', 'authorization', 'apiKey'];
+    const sensitiveFields = [
+      'password',
+      'token',
+      'secret',
+      'authorization',
+      'apiKey',
+    ];
     const sanitized = { ...body };
 
     for (const field of sensitiveFields) {

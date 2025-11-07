@@ -64,7 +64,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         logout();
       }
     } catch (error) {
-      console.error('Token validation error:', error);
       logout();
     } finally {
       setLoading(false);

@@ -103,7 +103,6 @@ const EditTitle = () => {
         setStatus(title.status as 'ONGOING' | 'COMPLETED' | 'HIATUS' || 'ONGOING');
 
       } catch (error) {
-        console.error('Erro ao carregar dados:', error);
         setError(`Erro ao carregar dados: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
       } finally {
         setLoading(false);
@@ -221,7 +220,6 @@ const EditTitle = () => {
       showToast('Título atualizado com sucesso!', 'success');
       navigate('/admin', { state: { activeTab: 'manage' } });
     } catch (error) {
-      console.error('Erro ao salvar:', error);
       const errorMessage = `Erro ao salvar: ${error instanceof Error ? error.message : 'Erro desconhecido'}`;
       showToast(errorMessage, 'error');
       setError(errorMessage);

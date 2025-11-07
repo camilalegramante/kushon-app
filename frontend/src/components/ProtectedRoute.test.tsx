@@ -71,7 +71,6 @@ describe('ProtectedRoute Component', () => {
       </MemoryRouter>
     );
 
-    // Should show login page due to redirect
     expect(screen.getByText('Login Page')).toBeInTheDocument();
     expect(screen.queryByText('Protected Content')).not.toBeInTheDocument();
   });

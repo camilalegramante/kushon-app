@@ -211,7 +211,6 @@ describe('NotificationService', () => {
 
       await service.notifyUsersOnNewVolume('title-456', 5);
 
-      // When no preferences with emailOnNewVolume: true are found
       expect(emailService.sendNewVolumeNotification).not.toHaveBeenCalled();
     });
   });

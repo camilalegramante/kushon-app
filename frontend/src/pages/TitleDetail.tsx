@@ -67,7 +67,6 @@ const TitleDetail = () => {
           setEmailNotification(notificationResponse.data.emailOnNewVolume);
         }
       } catch (error) {
-        console.error('Erro ao carregar título:', error);
         setError('Erro ao carregar título. Verifique se o backend está rodando.');
       } finally {
         setLoading(false);
@@ -135,7 +134,6 @@ const TitleDetail = () => {
         throw new Error(response.message || 'Falha ao salvar progresso');
       }
     } catch (error) {
-      console.error('Erro ao salvar progresso:', error);
       setError(`Erro ao salvar progresso: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     } finally {
       setSaving(false);
@@ -167,7 +165,6 @@ const TitleDetail = () => {
       }
     } catch (error) {
       setEmailNotification(!newValue);
-      console.error('Erro ao atualizar notificação:', error);
       setError(`Erro ao atualizar notificação: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     } finally {
       setSavingNotification(false);

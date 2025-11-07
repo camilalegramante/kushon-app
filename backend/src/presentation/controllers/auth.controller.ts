@@ -36,11 +36,9 @@ export class AuthController {
         message: 'Login realizado com sucesso'
       };
     } catch (error) {
-      // Re-throw HTTP exceptions to get correct status codes
       if (error instanceof HttpException) {
         throw error;
       }
-      // For other errors, log and throw a generic error
       console.error('Login error:', error);
       throw error;
     }

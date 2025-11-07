@@ -84,7 +84,6 @@ const AdminPanel = () => {
           setTitles(titlesWithVolumes);
         }
       } catch (error) {
-        console.error('Erro ao carregar dados:', error);
         showToast('Erro ao carregar dados. Verifique se o backend está rodando.', 'error');
       } finally {
         setLoading(false);
@@ -168,7 +167,6 @@ const AdminPanel = () => {
         setActiveTab('manage');
       }
     } catch (error) {
-      console.error('Erro ao adicionar título:', error);
       showToast('Erro ao adicionar título. Verifique se o backend está rodando.', 'error');
     } finally {
       setIsSubmitting(false);
@@ -237,7 +235,6 @@ const AdminPanel = () => {
         showToast('Título excluído com sucesso!', 'success');
       }
     } catch (error) {
-      console.error('Erro ao excluir título:', error);
       showToast('Erro ao excluir título. Verifique se o backend está rodando.', 'error');
     }
   };

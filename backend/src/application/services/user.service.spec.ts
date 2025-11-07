@@ -70,7 +70,6 @@ describe('UserService', () => {
       ];
 
       prismaService.$transaction.mockImplementation(async (callback) => {
-        // Simulate transaction execution
         return callback({
           userVolume: {
             upsert: jest.fn().mockResolvedValueOnce(mockUpsertResults[0]).mockResolvedValueOnce(mockUpsertResults[1]),

@@ -65,7 +65,6 @@ const UserPanel = () => {
           setAllTitlesCount(titles.length);
         }
       } catch (error) {
-        console.error('Erro ao carregar títulos:', error);
         showToast('Erro ao carregar títulos. Verifique se o backend está rodando.', 'error');
       } finally {
         setLoading(false);

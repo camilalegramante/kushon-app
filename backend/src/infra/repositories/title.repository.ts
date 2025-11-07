@@ -164,7 +164,6 @@ export class TitleRepository {
 
           try {
             await this.notificationService.notifyUsersOnNewVolume(id, vol.number);
-            console.log(`Notificações enviadas para volume ${vol.number} do título ${id}`);
           } catch (error) {
             console.error(`Erro ao enviar notificações para volume ${vol.number}:`, error);
           }
@@ -193,23 +192,17 @@ export class TitleRepository {
   }
 
   async updateMainCover(titleId: string, coverImage: string): Promise<void> {
-    console.log(`Updating main cover - Title ID: ${titleId}, Cover: ${coverImage}`);
-
     try {
       await this.prisma.title.update({
         where: { id: titleId },
         data: { coverImage: coverImage }
       });
-      console.log(`Main cover updated successfully`);
     } catch (error) {
-      console.error(`Error updating main cover:`, error);
       throw error;
     }
   }
 
   async updateVolumeCover(volumeNumber: number, titleId: string, coverImage: string): Promise<void> {
-    console.log(`Updating volume cover - Volume: ${volumeNumber}, Title ID: ${titleId}, Cover: ${coverImage}`);
-
     try {
       const existingVolume = await this.prisma.volume.findFirst({
         where: {
@@ -218,10 +211,7 @@ export class TitleRepository {
         }
       });
 
-      console.log(`Existing volume found:`, existingVolume);
-
       if (!existingVolume) {
-        console.log(`Volume ${volumeNumber} not found for title ${titleId} - skipping update`);
         return;
       }
 
@@ -234,9 +224,7 @@ export class TitleRepository {
         }
       });
 
-      console.log(`Update result:`, result);
     } catch (error) {
-      console.error(`Error updating volume cover:`, error);
       throw error;
     }
   }

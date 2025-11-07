@@ -40,13 +40,12 @@ const MyTitles = () => {
                   };
                 });
 
-                // Só adiciona títulos que o usuário possui pelo menos um volume
                 if (volumesWithProgress.some(v => v.owned)) {
                   myTitles.push({ ...title, volumes: volumesWithProgress });
                 }
               }
-            } catch {
-              // Ignora erros de títulos específicos
+            } catch (error) {
+              console.error('Error loading title volumes:', error);
             }
           }
 
@@ -54,7 +53,6 @@ const MyTitles = () => {
           setFilteredTitles(myTitles);
         }
       } catch (error) {
-        console.error('Erro ao carregar meus títulos:', error);
         showToast('Erro ao carregar títulos. Verifique se o backend está rodando.', 'error');
       } finally {
         setLoading(false);
@@ -67,7 +65,6 @@ const MyTitles = () => {
   useEffect(() => {
     let filtered = myTitles;
 
-    // Filtro por busca
     if (searchTerm) {
       filtered = filtered.filter(title =>
         title.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -76,7 +73,6 @@ const MyTitles = () => {
       );
     }
 
-    // Filtro por status
     if (statusFilter !== 'ALL') {
       filtered = filtered.filter(title => title.status === statusFilter);
     }

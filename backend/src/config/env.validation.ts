@@ -72,7 +72,6 @@ export class EnvironmentValidation {
       this.logger.warn('═'.repeat(60));
     }
 
-    // Log all environment variables (masked)
     this.logger.log('═'.repeat(60));
     this.logger.log('📋 ENVIRONMENT VARIABLES STATUS:');
     [...criticalEnvVars, ...optionalEnvVars].forEach((envVar) => {

@@ -7,6 +7,7 @@ import { AuthModule } from './presentation/modules/auth.module';
 import { UserModule } from './presentation/modules/user.module';
 import { NotificationModule } from './presentation/modules/notification.module';
 import { HttpLoggerMiddleware } from './presentation/middleware/http-logger.middleware';
+import { CookieAuthMiddleware } from './presentation/middleware/cookie-auth.middleware';
 
 @Module({
   imports: [
@@ -24,6 +25,10 @@ import { HttpLoggerMiddleware } from './presentation/middleware/http-logger.midd
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(HttpLoggerMiddleware).forRoutes('*');
+    consumer
+      .apply(CookieAuthMiddleware)
+      .forRoutes('*')
+      .apply(HttpLoggerMiddleware)
+      .forRoutes('*');
   }
 }

@@ -6,7 +6,9 @@ import {
   UseGuards,
   Request,
   HttpException,
+  Response,
 } from '@nestjs/common';
+import { Response as ExpressResponse } from 'express';
 import { AuthService } from '../../application/services/auth.service';
 import { RegisterDto } from '../../application/dtos/auth/register.dto';
 import { LoginDto } from '../../application/dtos/auth/login.dto';
@@ -17,14 +19,24 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('register')
-  async register(@Body() registerDto: RegisterDto) {
+  async register(@Body() registerDto: RegisterDto, @Response() res: ExpressResponse) {
     try {
       const result = await this.authService.register(registerDto);
-      return {
+
+      res.cookie('Authorization', result.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+
+      return res.json({
         success: true,
-        data: result,
+        data: {
+          user: result.user,
+        },
         message: 'Usuário registrado com sucesso',
-      };
+      });
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -35,14 +47,24 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Body() loginDto: LoginDto, @Response() res: ExpressResponse) {
     try {
       const result = await this.authService.login(loginDto);
-      return {
+
+      res.cookie('Authorization', result.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+
+      return res.json({
         success: true,
-        data: result,
+        data: {
+          user: result.user,
+        },
         message: 'Login realizado com sucesso',
-      };
+      });
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

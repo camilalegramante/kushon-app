@@ -61,25 +61,17 @@ export interface VolumeResponse {
 }
 
 class ApiService {
-  private getToken() {
-    return localStorage.getItem('token');
-  }
-
   private async fetchApi(endpoint: string, options: RequestInit = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
     const method = options.method || 'GET';
     const startTime = Date.now();
 
-    const token = this.getToken();
     let headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (options.headers) {
       if (Array.isArray(options.headers)) {
       } else {
         headers = { ...headers, ...options.headers as Record<string, string> };
       }
-    }
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
     }
 
     const requestBody = options.body ? JSON.parse(options.body as string) : undefined;
@@ -88,6 +80,7 @@ class ApiService {
     try {
       const response = await fetch(url, {
         headers,
+        credentials: 'include',
         ...options,
       });
 
@@ -140,20 +133,14 @@ class ApiService {
     const url = `${API_BASE_URL}/titles`;
     const method = 'POST';
     const startTime = Date.now();
-    const token = this.getToken();
-
-    const headers: Record<string, string> = {};
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
 
     logger.apiRequest(method, url, { formData: 'multipart/form-data' });
 
     try {
       const response = await fetch(url, {
         method: 'POST',
-        headers,
         body: formData,
+        credentials: 'include',
       });
 
       const duration = Date.now() - startTime;
@@ -192,20 +179,14 @@ class ApiService {
     const url = `${API_BASE_URL}/titles/${id}`;
     const method = 'PUT';
     const startTime = Date.now();
-    const token = this.getToken();
-
-    const headers: Record<string, string> = {};
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
 
     logger.apiRequest(method, url, { formData: 'multipart/form-data' });
 
     try {
       const response = await fetch(url, {
         method: 'PUT',
-        headers,
         body: formData,
+        credentials: 'include',
       });
 
       const duration = Date.now() - startTime;

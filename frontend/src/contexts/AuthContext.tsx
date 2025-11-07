@@ -11,7 +11,6 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  token: string | null;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -34,23 +33,16 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (token) {
-      validateToken();
-    } else {
-      setLoading(false);
-    }
-  }, [token]);
+    validateToken();
+  }, []);
 
   const validateToken = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/me`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -77,16 +69,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        const { access_token, user: userData } = data.data;
-        setToken(access_token);
+        const { user: userData } = data.data;
         setUser(userData);
-        localStorage.setItem('token', access_token);
       } else {
         throw new Error(data.message || 'Erro no login');
       }
@@ -102,16 +93,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ name, email, password }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        const { access_token, user: userData } = data.data;
-        setToken(access_token);
+        const { user: userData } = data.data;
         setUser(userData);
-        localStorage.setItem('token', access_token);
       } else {
         throw new Error(data.message || 'Erro no cadastro');
       }
@@ -122,13 +112,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     setUser(null);
-    setToken(null);
-    localStorage.removeItem('token');
   };
 
   const value = {
     user,
-    token,
     login,
     register,
     logout,

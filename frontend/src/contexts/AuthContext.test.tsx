@@ -27,12 +27,11 @@ Object.defineProperty(window, 'localStorage', {
 
 const TestComponent = () => {
   try {
-    const { user, token, loading, login, register, logout } = useAuth();
+    const { user, loading, login, register, logout } = useAuth();
     return (
       <div>
         <div data-testid="loading">{loading ? 'loading' : 'loaded'}</div>
         <div data-testid="user">{user ? `${user.name} (${user.email})` : 'no user'}</div>
-        <div data-testid="token">{token ? 'has token' : 'no token'}</div>
         <button data-testid="login-btn" onClick={() => login('test@example.com', 'password')}>
           Login
         </button>
@@ -80,12 +79,9 @@ describe('AuthContext', () => {
     });
 
     expect(testingLibrary.screen.getByTestId('user')).toHaveTextContent('no user');
-    expect(testingLibrary.screen.getByTestId('token')).toHaveTextContent('no token');
   });
 
-  it('should initialize with token from localStorage', async () => {
-    localStorageMock.setItem('token', 'existing-token');
-
+  it('should initialize with user from token validation', async () => {
     (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
@@ -110,12 +106,9 @@ describe('AuthContext', () => {
     });
 
     expect(testingLibrary.screen.getByTestId('user')).toHaveTextContent('John Doe (john@example.com)');
-    expect(testingLibrary.screen.getByTestId('token')).toHaveTextContent('has token');
   });
 
   it('should logout when token validation fails', async () => {
-    localStorageMock.setItem('token', 'invalid-token');
-
     (global.fetch as any).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ message: 'Unauthorized' }),
@@ -132,8 +125,6 @@ describe('AuthContext', () => {
     });
 
     expect(testingLibrary.screen.getByTestId('user')).toHaveTextContent('no user');
-    expect(testingLibrary.screen.getByTestId('token')).toHaveTextContent('no token');
-    expect(localStorageMock.getItem('token')).toBeNull();
   });
 
   it('should handle login attempt', async () => {
@@ -173,8 +164,6 @@ describe('AuthContext', () => {
   });
 
   it('should handle logout', async () => {
-    localStorageMock.setItem('token', 'existing-token');
-
     (global.fetch as any).mockResolvedValue({
       ok: true,
       json: async () => ({
@@ -199,13 +188,10 @@ describe('AuthContext', () => {
     });
 
     const logoutBtn = testingLibrary.screen.getByTestId('logout-btn');
-    await logoutBtn.click();
+    logoutBtn.click();
 
     await testingLibrary.waitFor(() => {
       expect(testingLibrary.screen.getByTestId('user')).toHaveTextContent('no user');
     });
-
-    expect(testingLibrary.screen.getByTestId('token')).toHaveTextContent('no token');
-    expect(localStorageMock.getItem('token')).toBeNull();
   });
 });

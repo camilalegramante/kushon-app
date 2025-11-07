@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import type { Volume } from '../data/mockTitles';
 import './VolumeGrid.css';
 
@@ -8,8 +7,6 @@ interface VolumeGridProps {
 }
 
 const VolumeGrid = ({ volumes, onVolumeToggle }: VolumeGridProps) => {
-  const [_hoveredVolume, setHoveredVolume] = useState<number | null>(null);
-
   return (
     <div className="volume-grid-section">
       <h3>Volumes Disponíveis</h3>
@@ -19,8 +16,6 @@ const VolumeGrid = ({ volumes, onVolumeToggle }: VolumeGridProps) => {
             key={volume.number}
             className={`volume-item ${volume.owned ? 'owned' : 'not-owned'}`}
             onClick={() => onVolumeToggle(volume.number)}
-            onMouseEnter={() => setHoveredVolume(volume.number)}
-            onMouseLeave={() => setHoveredVolume(null)}
           >
             <div className="volume-cover">
               <img src={volume.cover} alt={volume.title} />

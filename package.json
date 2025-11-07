@@ -17,6 +17,9 @@
     "test:backend": "cd backend && npm run test",
     "test:frontend": "cd frontend && npm run test",
     "test:e2e": "cd backend && npm run test:e2e",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:frontend": "cd frontend && npm run lint",
     "help": "echo \"Available commands: install, start, start:db, start:backend, start:frontend, stop:db, clean, test, test:backend, test:frontend, test:e2e\"",
     "heroku-postbuild": "echo '\\n========================================' && echo '🏗️  HEROKU POST-BUILD STARTED' && echo '========================================\\n' && echo '📦 Step 1: Generating Prisma Client...' && cd backend && npm run prisma:generate && echo '✅ Prisma client generated' && echo '\\n📦 Step 2: Building Backend...' && npm run build && echo '✅ Backend built successfully' && echo '\\n📦 Step 3: Building Frontend...' && cd ../frontend && npm run build && echo '✅ Frontend built successfully' && echo '\\n========================================' && echo '✅ HEROKU POST-BUILD COMPLETED' && echo '========================================\\n'"
   },

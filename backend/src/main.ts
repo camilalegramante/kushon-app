@@ -53,7 +53,7 @@ async function bootstrap() {
     if (emailService && emailService.testConnection) {
       await emailService.testConnection();
     }
-  } catch (error) {
+  } catch {
     logger.warn('Could not verify SMTP connection');
   }
 

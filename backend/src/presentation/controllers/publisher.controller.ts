@@ -1,5 +1,7 @@
-import { Controller, Get, Post, Delete, Body, Param, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, BadRequestException, UseGuards } from '@nestjs/common';
 import { PublisherRepository } from '../../infra/repositories/publisher.repository';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { AdminAuthGuard } from '../guards/admin-auth.guard';
 
 @Controller('publishers')
 export class PublisherController {
@@ -15,6 +17,7 @@ export class PublisherController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard, AdminAuthGuard)
   async create(@Body() createPublisherDto: { name: string; country?: string }) {
     const publisher = await this.publisherRepository.create(createPublisherDto);
     return {
@@ -25,6 +28,7 @@ export class PublisherController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, AdminAuthGuard)
   async delete(@Param('id') id: string) {
     const publisher = await this.publisherRepository.findById(id);
 

@@ -8,12 +8,15 @@ import {
   Param,
   UseInterceptors,
   UploadedFiles,
+  UseGuards,
 } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { TitleRepository } from '../../infra/repositories/title.repository';
 import { UploadService } from '../../infra/services/upload.service';
 import { CreateTitleDto } from '../../application/dtos/create-title.dto';
 import { UpdateTitleDto } from '../../application/dtos/update-title.dto';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { AdminAuthGuard } from '../guards/admin-auth.guard';
 
 @Controller('titles')
 export class TitleController {
@@ -23,6 +26,7 @@ export class TitleController {
   ) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, AdminAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async create(
     @Body('data') data: string,
@@ -101,6 +105,7 @@ export class TitleController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard, AdminAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async update(
     @Param('id') id: string,
@@ -173,6 +178,7 @@ export class TitleController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, AdminAuthGuard)
   async delete(@Param('id') id: string) {
     try {
       const deleted = await this.titleRepository.delete(id);

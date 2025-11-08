@@ -24,6 +24,7 @@ interface EditTitleData {
   synopsis: string;
   author: string;
   genre: string;
+  publisherId: string;
   totalVolumes: number;
   mainCover?: {
     file?: File;
@@ -44,10 +45,11 @@ const EditTitle = () => {
     synopsis: '',
     author: '',
     genre: '',
+    publisherId: '',
     totalVolumes: 1,
     volumeCovers: []
   });
-    const [status, setStatus] = useState<'ONGOING' | 'COMPLETED' | 'HIATUS'>('ONGOING');
+  const [status, setStatus] = useState<'ONGOING' | 'COMPLETED' | 'HIATUS'>('ONGOING');
 
   const [publishers, setPublishers] = useState<Publisher[]>([]);
   const [loading, setLoading] = useState(true);
@@ -93,6 +95,7 @@ const EditTitle = () => {
           synopsis: title.synopsis || '',
           author: title.author || '',
           genre: title.genre || '',
+          publisherId: title.publisherId || '',
           totalVolumes: volumes.length || 1,
           mainCover: {
             existing: title.coverImage ? `${BASE_URL}${title.coverImage}` : undefined
@@ -187,7 +190,7 @@ const EditTitle = () => {
           author: titleData.author,
           genre: titleData.genre,
           status: status,
-          ...(publishers[0]?.id && { publisherId: publishers[0].id }),
+          publisherId: titleData.publisherId,
           volumes: volumesPayload
         };
         formData.append('data', JSON.stringify(titleInfo));
@@ -210,7 +213,7 @@ const EditTitle = () => {
           author: titleData.author,
           genre: titleData.genre,
           status: status,
-          ...(publishers[0]?.id && { publisherId: publishers[0].id }),
+          publisherId: titleData.publisherId,
           volumes: volumesPayload
         });
         if (!response.success) {
@@ -304,6 +307,24 @@ const EditTitle = () => {
                 placeholder="ex: Ação, Aventura"
                 required
               />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="publisherId">Editora * <small style={{ color: '#666' }}>(Crie novas no painel de administração)</small></label>
+              <select
+                id="publisherId"
+                name="publisherId"
+                value={titleData.publisherId}
+                onChange={(e) => setTitleData(prev => ({ ...prev, publisherId: e.target.value }))}
+                required
+              >
+                <option value="">Selecione uma editora</option>
+                {publishers.map(pub => (
+                  <option key={pub.id} value={pub.id}>
+                    {pub.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="form-group">

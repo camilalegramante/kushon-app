@@ -33,6 +33,7 @@ export class AuthController {
       return res.json({
         success: true,
         data: {
+          access_token: result.access_token,
           user: result.user,
         },
         message: 'Usuário registrado com sucesso',
@@ -61,6 +62,7 @@ export class AuthController {
       return res.json({
         success: true,
         data: {
+          access_token: result.access_token,
           user: result.user,
         },
         message: 'Login realizado com sucesso',

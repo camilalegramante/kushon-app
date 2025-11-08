@@ -29,4 +29,10 @@ export class PublisherRepository {
       },
     });
   }
+
+  async delete(id: string) {
+    return await this.prisma.publisher.delete({
+      where: { id },
+    });
+  }
 }

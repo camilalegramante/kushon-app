@@ -243,6 +243,14 @@ export class TitleRepository {
 
   async delete(id: string): Promise<boolean> {
     try {
+      await this.prisma.userVolume.deleteMany({
+        where: {
+          volume: {
+            titleId: id,
+          },
+        },
+      });
+
       await this.prisma.volume.deleteMany({
         where: { titleId: id },
       });
@@ -252,7 +260,8 @@ export class TitleRepository {
       });
 
       return true;
-    } catch {
+    } catch (error) {
+      console.error(`Erro ao excluir título com ID ${id}:`, error);
       return false;
     }
   }

@@ -85,17 +85,18 @@ class ApiService {
       });
 
       const duration = Date.now() - startTime;
+      const data = await response.json();
 
       if (!response.ok) {
         logger.apiError(method, url, {
           status: response.status,
           statusText: response.statusText,
-          duration: `${duration}ms`
+          duration: `${duration}ms`,
+          errorMessage: data.message || data.error
         });
-        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+        const errorMessage = data.message || `API Error: ${response.status} ${response.statusText}`;
+        throw new Error(errorMessage);
       }
-
-      const data = await response.json();
 
       logger.apiResponse(method, url, response.status, duration, data);
 
@@ -118,6 +119,12 @@ class ApiService {
     return this.fetchApi('/publishers', {
       method: 'POST',
       body: JSON.stringify(data),
+    });
+  }
+
+  async deletePublisher(publisherId: string): Promise<{ success: boolean }> {
+    return this.fetchApi(`/publishers/${publisherId}`, {
+      method: 'DELETE',
     });
   }
 
